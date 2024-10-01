@@ -42,7 +42,7 @@ export class EditRoomComponent implements OnInit {
   }
 
   private findRoomById(roomId: number): Observable<Rooms> {
-    return this.http.get<Rooms>(`https://localhost:7211/api/Rooms/GetBy/${roomId}`);
+    return this.http.get<Rooms>(`http://localhost:7211/api/Rooms/GetBy/${roomId}`);
   }
 
   public editRoom(): void {
@@ -55,7 +55,7 @@ export class EditRoomComponent implements OnInit {
         floor: this.roomForm.value.floor,
         number: this.roomForm.value.number,
       };
-      this.http.put(`https://localhost:7211/api/Rooms/Update/${this.roomId}`, updatedRoom).subscribe({
+      this.http.put(`http://localhost:7211/api/Rooms/Update/${this.roomId}`, updatedRoom).subscribe({
         next: () => {
           console.log('Room updated successfully');
           this.router.navigate(['/rooms']); 

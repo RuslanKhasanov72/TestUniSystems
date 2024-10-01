@@ -10,7 +10,12 @@ public class BuildingService
 {
 		public void SendBuildingMessage(Building building,string action)
 		{
-			var factory = new ConnectionFactory() { HostName = "localhost" };
+			var factory = new ConnectionFactory() {
+				HostName = "rabbitmq", // или IP-адрес RabbitMQ
+				Port = 5672, // Порт по умолчанию для RabbitMQ
+				UserName = "guest", // Ваше имя пользователя
+				Password = "guest", // Ваш пароль
+			};
 			using var connection = factory.CreateConnection();
 			using var channel = connection.CreateModel();
 
@@ -23,7 +28,7 @@ public class BuildingService
 			BuildingMq buildingMq = new BuildingMq(building);
 			buildingMq.Action = action;
 			// Серилизация корпуса в JSON
-			var message = JsonSerializer.Serialize(building);
+			var message = JsonSerializer.Serialize(buildingMq);
 			var body = Encoding.UTF8.GetBytes(message);
 
 			// Отправка сообщения в RabbitMQ

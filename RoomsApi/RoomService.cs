@@ -20,7 +20,12 @@ public class RoomService:BackgroundService
 
 	public override Task StartAsync(CancellationToken cancellationToken)
 	{
-		var factory = new ConnectionFactory() { HostName = "localhost", DispatchConsumersAsync = true };
+		var factory = new ConnectionFactory() {
+			HostName = "rabbitmq", // или IP-адрес RabbitMQ
+			Port = 5672, // Порт по умолчанию для RabbitMQ
+			UserName = "guest", // Ваше имя пользователя
+			Password = "guest", // Ваш пароль
+		 DispatchConsumersAsync = true };
 		_connection = factory.CreateConnection();
 		_channel = _connection.CreateModel();
 
@@ -47,9 +52,13 @@ public class RoomService:BackgroundService
 			var building = JsonSerializer.Deserialize<BuildingMq>(message);
 
 			if (building.Action == "update")
+			{
 				await UpdateBuildingInRoomService(building);
+			}
 			else
+			{
 				await DeleteBuildingInRoomService(building);
+			}
 
 			Console.WriteLine($" [x] Received {message}");
 		};

@@ -19,7 +19,7 @@ namespace RoomsApi
 			var roomtypes = new[]
 			{
 				new RoomType { Name = "Лекционное" },
-				new RoomType { Name = "Для працтических занятий" },
+				new RoomType { Name = "Для практических занятий" },
 				new RoomType { Name = "Спортзал" }
 			};
 			context.RoomTypes.AddRange(roomtypes);

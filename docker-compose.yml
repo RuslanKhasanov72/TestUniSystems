@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  buildings-service:
+    build:
+      context: ./UniSystemsTest
+      dockerfile: Dockerfile
+    ports:
+      - "7217:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Database=buildingsdb;Username=postgres;Password=qwerty
+    depends_on:
+      - db
+
+  rooms-service:
+    build:
+      context: ./RoomsApi
+      dockerfile: Dockerfile
+    ports:
+      - "7211:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Database=roomsdb;Username=postgres;Password=qwerty
+    depends_on:
+      - db
+      - rabbitmq
+
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwerty
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest

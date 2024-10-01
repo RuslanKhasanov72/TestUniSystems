@@ -33,7 +33,7 @@ export class AddBuildingComponent implements OnInit {
         numberOfFloors: this.buildingForm.value.floors
       };
 
-      this.http.post('https://localhost:7217/api/Buildings/Add', newBuilding).subscribe({
+      this.http.post('http://localhost:7217/api/Buildings/Add', newBuilding).subscribe({
         next: () => {
           console.log('Building added successfully');
           this.router.navigate(['/buildings']); 

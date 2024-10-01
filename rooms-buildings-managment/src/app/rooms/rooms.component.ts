@@ -19,11 +19,11 @@ export class RoomsComponent {
   rooms$=this.getRooms();
 
   private getRooms(): Observable<ShowRooms[]>{
-    return this.http.get<ShowRooms[]>('https://localhost:7211/api/Rooms/GetAll');
+    return this.http.get<ShowRooms[]>('http://localhost:7211/api/Rooms/GetAll');
   }
 
   public deleteRoom(id: number ){
-    this.http.delete('https://localhost:7211/api/Rooms/Delete'+id).subscribe(
+    this.http.delete('http://localhost:7211/api/Rooms/Delete'+id).subscribe(
       {
         next:(value) => {
           alert('Item deleted');

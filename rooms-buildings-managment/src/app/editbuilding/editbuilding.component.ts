@@ -53,7 +53,7 @@ ngOnInit(): void {
 
 public findById(itemId:number): Observable<Buildings>
 {
-return this.http.get<Buildings>('https://localhost:7217/api/Buildings/GetBy/'+itemId);
+return this.http.get<Buildings>('http://localhost:7217/api/Buildings/GetBy/'+itemId);
 }
 
 public editBuilding(): void {
@@ -64,7 +64,7 @@ public editBuilding(): void {
       numberOfFloors: this.buildingForm.value.floors
     };
 
-    this.http.put(`https://localhost:7217/api/Buildings/Update/${this.itemId}`, addbuildingRequest).subscribe({
+    this.http.put(`http://localhost:7217/api/Buildings/Update/${this.itemId}`, addbuildingRequest).subscribe({
       next: (response) => {
         console.log('Building updated successfully:', response);
   

@@ -37,7 +37,7 @@ export class AddRoomComponent implements OnInit {
         number: this.roomForm.value.number
       };
 
-      this.http.post('https://localhost:7211/api/Rooms/Add', newRoom).subscribe({
+      this.http.post('http://localhost:7211/api/Rooms/Add', newRoom).subscribe({
         next: () => {
           console.log('Room added successfully');
           this.router.navigate(['/rooms']); 

@@ -18,12 +18,12 @@ export class BuildingsComponent {
   buildings$=this.getBuildings();
 
   private getBuildings(): Observable<Buildings[]>{
-    return this.http.get<Buildings[]>('https://localhost:7217/api/Buildings/GetAll');
+    return this.http.get<Buildings[]>('http://localhost:7217/api/Buildings/GetAll');
   }
 
 
   public deleteBuilding(id: number ){
-    this.http.delete('https://localhost:7217/api/Buildings/Delete'+id).subscribe(
+    this.http.delete('http://localhost:7217/api/Buildings/Delete'+id).subscribe(
       {
         next:(value) => {
           alert('Item deleted');
