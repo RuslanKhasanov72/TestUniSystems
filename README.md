@@ -10,6 +10,6 @@
         <p><a href="http://localhost:7211/swagger/index.html" target="_blank">http://localhost:7211/swagger/index.html</a></p>
         <p>Для теста API Зданий, перейдите по следующему адресу в вашем браузере:</p>
         <p><a href="http://localhost:7217/swagger/index.html" target="_blank">http://localhost:7217/swagger/index.html</a></p>
-        <p>Для теста клиентского приложения, перейдите по следующему адресу в вашем браузере:</p>
+        <p>Для теста клиентского приложения(Не удалось получить лицензию Kendo UI, из-за этого воспользовался Bootstrap), перейдите по следующему адресу в вашем браузере:</p>
         <p><a href="http://localhost:4201" target="_blank">http://localhost:4201</a></p>
 </body>
