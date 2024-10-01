@@ -1,0 +1,30 @@
+<div class="container mt-4">
+    <h2 class="mb-4">Добавить Новую Комнату</h2>
+    <form [formGroup]="roomForm" (ngSubmit)="addRoom()">
+      <div class="mb-3">
+        <label for="name" class="form-label">Наименование</label>
+        <input type="text" id="name" formControlName="name" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="buildingId" class="form-label">ID Здания</label>
+        <input type="number" id="buildingId" formControlName="buildingId" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="roomTypeId" class="form-label">Id типа Комнаты</label>
+        <input type="number" id="roomTypeId" formControlName="roomTypeId" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="capacity" class="form-label">Количество Мест</label>
+        <input type="number" id="capacity" formControlName="capacity" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="floor" class="form-label">Этаж</label>
+        <input type="number" id="floor" formControlName="floor" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="number" class="form-label">Номер Комнаты</label>
+        <input type="number" id="number" formControlName="number" class="form-control" required />
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="roomForm.invalid">Сохранить</button>
+    </form>
+  </div>

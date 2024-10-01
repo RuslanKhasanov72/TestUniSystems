@@ -1,0 +1,18 @@
+<div class="container mt-4">
+    <h2 class="mb-4">Добавить Новое Здание</h2>
+    <form [formGroup]="buildingForm" (ngSubmit)="addBuilding()">
+      <div class="mb-3">
+        <label for="name" class="form-label">Наименование</label>
+        <input type="text" id="name" formControlName="name" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="address" class="form-label">Адрес</label>
+        <input type="text" id="address" formControlName="address" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label for="floors" class="form-label">Количество Этажей</label>
+        <input type="number" id="floors" formControlName="floors" class="form-control" required />
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="buildingForm.invalid">Сохранить</button>
+    </form>
+  </div>

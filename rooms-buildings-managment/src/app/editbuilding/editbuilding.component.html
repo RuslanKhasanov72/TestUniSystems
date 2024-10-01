@@ -1,0 +1,49 @@
+<div class="container mt-4">
+    <h2>Редактировать здание</h2>
+  
+    <form [formGroup]="buildingForm" (ngSubmit)="editBuilding()">
+      <div class="mb-3">
+        <label for="name" class="form-label">Наименование</label>
+        <input
+          id="name"
+          type="text"
+          class="form-control"
+          formControlName="name"
+          placeholder="Введите наименование"
+        />
+        <div *ngIf="buildingForm.get('name')?.invalid && buildingForm.get('name')?.touched" class="text-danger">
+          Наименование обязательно
+        </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="address" class="form-label">Адрес</label>
+        <input
+          id="address"
+          type="text"
+          class="form-control"
+          formControlName="address"
+          placeholder="Введите адрес"
+        />
+        <div *ngIf="buildingForm.get('address')?.invalid && buildingForm.get('address')?.touched" class="text-danger">
+          Адрес обязателен
+        </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="floors" class="form-label">Кол-во этажей</label>
+        <input
+          id="floors"
+          type="number"
+          class="form-control"
+          formControlName="floors"
+          placeholder="Введите количество этажей"
+        />
+        <div *ngIf="buildingForm.get('floors')?.invalid && buildingForm.get('floors')?.touched" class="text-danger">
+          Введите корректное количество этажей
+        </div>
+      </div>
+  
+      <button type="submit" class="btn btn-primary" [disabled]="buildingForm.invalid">Сохранить</button>
+    </form>
+  </div>
