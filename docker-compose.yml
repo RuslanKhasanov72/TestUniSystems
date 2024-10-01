@@ -25,7 +25,14 @@ services:
     depends_on:
       - db
       - rabbitmq
-
+      
+  angular-app:
+    build:
+      context: ./rooms-buildings-managment 
+      dockerfile: Dockerfile
+    ports:
+      - "4201:4200" 
+      
   db:
     image: postgres:13
     restart: always
