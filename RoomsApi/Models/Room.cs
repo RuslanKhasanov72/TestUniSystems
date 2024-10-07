@@ -3,6 +3,7 @@
 	public class Room
 	{
 		public int Id { get; set; }
+		public Building Building { get; set; }
 		public int BuildingId { get; set; }
 		public string Name { get; set; }
 		public int RoomTypeId { get; set; }  

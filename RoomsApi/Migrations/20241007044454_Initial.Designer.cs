@@ -11,7 +11,7 @@ using RoomsApi.Models;
 namespace RoomsApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240930071146_Initial")]
+    [Migration("20241007044454_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -73,6 +73,8 @@ namespace RoomsApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BuildingId");
+
                     b.HasIndex("RoomTypeId");
 
                     b.ToTable("Rooms");
@@ -97,11 +99,19 @@ namespace RoomsApi.Migrations
 
             modelBuilder.Entity("RoomsApi.Models.Room", b =>
                 {
+                    b.HasOne("RoomsApi.Models.Building", "Building")
+                        .WithMany()
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("RoomsApi.Models.RoomType", "RoomType")
                         .WithMany()
                         .HasForeignKey("RoomTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Building");
 
                     b.Navigation("RoomType");
                 });

@@ -1,50 +1,67 @@
 ﻿using BuildingsApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using BuildingsApi.Services;
 using BuildingsApi.EditModels;
-using System.Numerics;
-using System.Net;
-using System.Xml.Linq;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BuildingsApi.Controllers
 {
+	/// <summary>
+	/// Контроллер для управления зданиями.
+	/// </summary>
+	/// <remarks>
+	/// Этот контроллер предоставляет API для управления зданиями в системе.
+	/// Вы можете получать информацию о всех зданиях, добавлять новые здания,
+	/// обновлять существующие и удалять здания.
+	/// </remarks>
 	[Route("api/[controller]")]
 	[ApiController]
 	public class BuildingsController : ControllerBase
 	{
-		private readonly AppDbContext _appDbContext;
 		private readonly BuildingService _buildingService;
 
-		public BuildingsController(AppDbContext appDbContext, BuildingService buildingService)
+		/// <summary>
+		/// Инициализирует новый экземпляр <see cref="BuildingsController"/> с указанным сервисом зданий.
+		/// </summary>
+		/// <param name="buildingService">Сервис для работы с зданиями.</param>
+		public BuildingsController(BuildingService buildingService)
 		{
 			_buildingService = buildingService;
-			_appDbContext = appDbContext;
 		}
-		// Get all buildings
+
+		/// <summary>
+		/// Получает все здания.
+		/// </summary>
+		/// <returns>Список зданий.</returns>
 		[HttpGet]
 		[Route("GetAll")]
 		public async Task<ActionResult<IEnumerable<Building>>> GetBuildings()
 		{
-			return await _appDbContext.Buildings.ToListAsync();
+			var buildings = await _buildingService.GetAllBuildingsAsync();
+			return Ok(buildings);
 		}
 
-		// Get building by id
+		/// <summary>
+		/// Получает здание по идентификатору.
+		/// </summary>
+		/// <param name="id">Идентификатор здания.</param>
+		/// <returns>Здание с указанным идентификатором, если оно существует.</returns>
 		[HttpGet]
 		[Route("GetBy/{id:int}")]
 		public async Task<ActionResult<Building>> GetBuilding(int id)
 		{
-			var building = await _appDbContext.Buildings.FindAsync(id);
-
+			var building = await _buildingService.GetBuildingByIdAsync(id);
 			if (building == null)
 			{
 				return NotFound();
 			}
-
-			return building;
+			return Ok(building);
 		}
 
-		// Create new building
+		/// <summary>
+		/// Создает новое здание.
+		/// </summary>
+		/// <param name="editbuilding">Данные для создания нового здания.</param>
+		/// <returns>Созданное здание.</returns>
 		[HttpPost]
 		[Route("Add")]
 		public async Task<ActionResult<Building>> CreateBuilding(EditBuilding editbuilding)
@@ -55,21 +72,24 @@ namespace BuildingsApi.Controllers
 				Address = editbuilding.Address,
 				NumberOfFloors = editbuilding.NumberOfFloors
 			};
-			_appDbContext.Buildings.Add(building);
-			await _appDbContext.SaveChangesAsync();
 
-			_buildingService.SendBuildingMessage(building,"update");
+			var createdBuilding = await _buildingService.CreateBuildingAsync(building);
+			_buildingService.SendBuildingMessage(createdBuilding, "update");
 
-			return CreatedAtAction(nameof(GetBuilding), new { id = building.Id }, building);
+			return CreatedAtAction(nameof(GetBuilding), new { id = createdBuilding.Id }, createdBuilding);
 		}
 
-		// Update existing building
+		/// <summary>
+		/// Обновляет существующее здание.
+		/// </summary>
+		/// <param name="id">Идентификатор здания, которое необходимо обновить.</param>
+		/// <param name="editbuilding">Данные для обновления здания.</param>
+		/// <returns>Результат обновления.</returns>
 		[HttpPut("Update/{id}")]
 		public async Task<IActionResult> UpdateBuilding(int id, EditBuilding editbuilding)
 		{
-			var building = await _appDbContext.Buildings.FindAsync(id);
-
-			if (building==null)
+			var building = await _buildingService.GetBuildingByIdAsync(id);
+			if (building == null)
 			{
 				return NotFound();
 			}
@@ -78,29 +98,28 @@ namespace BuildingsApi.Controllers
 			building.Address = editbuilding.Address;
 			building.NumberOfFloors = editbuilding.NumberOfFloors;
 
-			await _appDbContext.SaveChangesAsync();
+			await _buildingService.UpdateBuildingAsync(building);
+			_buildingService.SendBuildingMessage(building, "update");
 
-			_buildingService.SendBuildingMessage(building,"update");
-
-
-			return Ok();
+			return NoContent();
 		}
 
-		// Delete building
+		/// <summary>
+		/// Удаляет здание.
+		/// </summary>
+		/// <param name="id">Идентификатор здания, которое необходимо удалить.</param>
+		/// <returns>Результат удаления.</returns>
 		[HttpDelete("Delete{id}")]
 		public async Task<IActionResult> DeleteBuilding(int id)
 		{
-			var building = await _appDbContext.Buildings.FindAsync(id);
+			var building = await _buildingService.GetBuildingByIdAsync(id);
 			if (building == null)
 			{
 				return NotFound();
 			}
 
-			_appDbContext.Buildings.Remove(building);
-
-			_buildingService.SendBuildingMessage(building,"delete");
-
-			await _appDbContext.SaveChangesAsync();
+			await _buildingService.DeleteBuildingAsync(building);
+			_buildingService.SendBuildingMessage(building, "delete");
 
 			return NoContent();
 		}

@@ -7,55 +7,59 @@ using System.Threading.Tasks;
 using RoomsApi.Models;
 using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
-public class RoomService:BackgroundService
+public class RoomServiceRabbit : BackgroundService
 {
-	readonly IServiceScopeFactory _factory;
+	private readonly RabbitMQSettings _rabbitMQSettings;
+	private readonly IServiceScopeFactory _factory;
 	private IModel _channel;
 	private IConnection _connection;
-	public RoomService(IServiceScopeFactory factory)
+
+	public RoomServiceRabbit(IOptions<RabbitMQSettings> rabbitMQSettings, IServiceScopeFactory factory)
 	{
+		_rabbitMQSettings = rabbitMQSettings.Value;
 		_factory = factory;
 	}
 
 	public override Task StartAsync(CancellationToken cancellationToken)
 	{
-		var factory = new ConnectionFactory() {
-			HostName = "rabbitmq", // или IP-адрес RabbitMQ
-			Port = 5672, // Порт по умолчанию для RabbitMQ
-			UserName = "guest", // Ваше имя пользователя
-			Password = "guest", // Ваш пароль
-		 DispatchConsumersAsync = true };
+		var factory = new ConnectionFactory()
+		{
+			HostName = _rabbitMQSettings.Host,
+			Port = _rabbitMQSettings.Port,
+			UserName = _rabbitMQSettings.UserName,
+			Password = _rabbitMQSettings.Password,
+			DispatchConsumersAsync = true
+		};
+
 		_connection = factory.CreateConnection();
 		_channel = _connection.CreateModel();
 
-		// Подписка на очередь
-		_channel.QueueDeclare(queue: "building_changes",
-							 durable: false,
-							 exclusive: false,
-							 autoDelete: false,
-							 arguments: null);
+		// Объявление очереди
+		_channel.QueueDeclare(queue: _rabbitMQSettings.QueueName,
+							  durable: false,
+							  exclusive: false,
+							  autoDelete: false,
+							  arguments: null);
 
 		return base.StartAsync(cancellationToken);
 	}
+
 	protected override Task ExecuteAsync(CancellationToken stoppingToken)
 	{
-		
-
 		var consumer = new AsyncEventingBasicConsumer(_channel);
 		consumer.Received += async (model, ea) =>
 		{
 			var body = ea.Body.ToArray();
 			var message = Encoding.UTF8.GetString(body);
-
-
 			var building = JsonSerializer.Deserialize<BuildingMq>(message);
 
 			if (building.Action == "update")
 			{
 				await UpdateBuildingInRoomService(building);
 			}
-			else
+			else if (building.Action == "delete")
 			{
 				await DeleteBuildingInRoomService(building);
 			}
@@ -63,9 +67,7 @@ public class RoomService:BackgroundService
 			Console.WriteLine($" [x] Received {message}");
 		};
 
-		_channel.BasicConsume(queue: "building_changes",
-							 autoAck: true,
-							 consumer: consumer);
+		_channel.BasicConsume(queue: _rabbitMQSettings.QueueName, autoAck: true, consumer: consumer);
 
 		return Task.CompletedTask;
 	}
@@ -79,7 +81,7 @@ public class RoomService:BackgroundService
 	private async Task UpdateBuildingInRoomService(Building building)
 	{
 		using var scope = _factory.CreateScope();
-		var dbContext =  scope.ServiceProvider.GetRequiredService<AppDbContext>();
+		var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
 		var buildingold = await dbContext.Buildings.FindAsync(building.Id);
 

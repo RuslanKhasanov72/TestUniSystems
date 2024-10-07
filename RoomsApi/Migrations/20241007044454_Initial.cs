@@ -55,12 +55,23 @@ namespace RoomsApi.Migrations
                 {
                     table.PrimaryKey("PK_Rooms", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Rooms_Buildings_BuildingId",
+                        column: x => x.BuildingId,
+                        principalTable: "Buildings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Rooms_RoomTypes_RoomTypeId",
                         column: x => x.RoomTypeId,
                         principalTable: "RoomTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rooms_BuildingId",
+                table: "Rooms",
+                column: "BuildingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rooms_RoomTypeId",
@@ -72,10 +83,10 @@ namespace RoomsApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Buildings");
+                name: "Rooms");
 
             migrationBuilder.DropTable(
-                name: "Rooms");
+                name: "Buildings");
 
             migrationBuilder.DropTable(
                 name: "RoomTypes");

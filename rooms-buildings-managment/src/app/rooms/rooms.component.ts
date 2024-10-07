@@ -23,7 +23,7 @@ export class RoomsComponent {
   }
 
   public deleteRoom(id: number ){
-    this.http.delete('http://localhost:7211/api/Rooms/Delete'+id).subscribe(
+    this.http.delete('http://localhost:7211/api/Rooms/Delete/'+id).subscribe(
       {
         next:(value) => {
           alert('Item deleted');
